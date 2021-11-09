@@ -42,7 +42,7 @@ body {
     left: 50%;
     top: 40%;
     margin-left: -160px;
-    margin-top: -160px;
+    margin-top: -190px;
 }
 
 #container h1 {
@@ -165,17 +165,17 @@ body {
 }
 
 .button.button-default {
-    background-image: -moz-linear-gradient(#77e0fb, #3f93ac);
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#77e0fb), to(#3f93ac));
+    background-image: -moz-linear-gradient(rgb(20, 177, 143), rgb(20, 177, 143));
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(20, 177, 143)), to(rgb(4, 255, 201)));
 }
 
 .button.button-default:hover {
-    background-image: -moz-linear-gradient(#ffd539, #af861e);
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#ffd539), to(#af861e));
+    background-image: -moz-linear-gradient(rgb(20, 177, 143), rgb(20, 177, 143));
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(31, 153, 127)), to(rgb(1, 255, 200)));
     cursor: pointer;
 }
 
 .button.button-default:active {
-    background-image: -moz-linear-gradient(#ffb133, #b3671a);
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#ffb133), to(#b3671a));
+    background-image: -moz-linear-gradient(#01fb54, #01fb54);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#01fb54), to(#16aa47));
 }
