@@ -1,13 +1,13 @@
 var IMAGE_HEIGHT = 64;
 var IMAGE_TOP_MARGIN = 5;
 var IMAGE_BOTTOM_MARGIN = 5;
-var SLOT_SEPARATOR_HEIGHT = 2
+var SLOT_SEPARATOR_HEIGHT = 2;
 var SLOT_HEIGHT = IMAGE_HEIGHT + IMAGE_TOP_MARGIN + IMAGE_BOTTOM_MARGIN + SLOT_SEPARATOR_HEIGHT; // how many pixels one slot image takes
 var RUNTIME = 3000;
 var SPINTIME = 1000;
-var ITEM_COUNT = 6
+var ITEM_COUNT = 8;
 var SLOT_SPEED = 15;
-var DRAW_OFFSET = 45
+var DRAW_OFFSET = 45;
 
 var BLURB_TBL = [
     'Et voittanut!',
@@ -49,8 +49,9 @@ function preloadImages(images, callback) {
             alert('Failed to load ' + id);
         }
         loadc++;
-        if (images.length == loadc)
+        if (images.length == loadc) {
             return callback()
+        }
     }
 
     images.forEach(function(asset) {
@@ -78,12 +79,14 @@ function SlotGame() {
         { id: 'AA3' },
         { id: 'AA4' },
         { id: 'AA5' },
-        { id: 'AA6' }
+        { id: 'AA6' },
+        { id: 'AA7' },
+        { id: 'AA8' }
 
     ];
 
-    $('canvas').attr('height', IMAGE_HEIGHT * ITEM_COUNT * 2);
-    $('canvas').css('height', IMAGE_HEIGHT * ITEM_COUNT * 2);
+    $('canvas').attr('height', IMAGE_HEIGHT * ITEM_COUNT * 4);
+    $('canvas').css('height', IMAGE_HEIGHT * ITEM_COUNT * 4);
 
     game.items = items;
 
@@ -100,8 +103,8 @@ function SlotGame() {
                 ctx.shadowOffsetX = 5;
                 ctx.shadowOffsetY = 5;
                 ctx.shadowBlur = 5;
-                ctx.drawImage(asset.img, 3, i * SLOT_HEIGHT + IMAGE_TOP_MARGIN);
-                ctx.drawImage(asset.img, 3, (i + ITEM_COUNT) * SLOT_HEIGHT + IMAGE_TOP_MARGIN);
+                ctx.drawImage(asset.img, 4, i * SLOT_HEIGHT + IMAGE_TOP_MARGIN);
+                ctx.drawImage(asset.img, 4, (i + ITEM_COUNT) * SLOT_HEIGHT + IMAGE_TOP_MARGIN);
                 ctx.restore();
                 ctx.fillRect(0, i * SLOT_HEIGHT, 70, SLOT_SEPARATOR_HEIGHT);
                 ctx.fillRect(0, (i + ITEM_COUNT) * SLOT_HEIGHT, 70, SLOT_SEPARATOR_HEIGHT);
@@ -117,7 +120,11 @@ function SlotGame() {
         game.items3 = copyArray(items);
         shuffleArray(game.items3);
         _fill_canvas(game.c3[0], game.items3);
-        game.resetOffset = (ITEM_COUNT + 3) * SLOT_HEIGHT;
+        game.items4 = copyArray(items);
+        shuffleArray(game.items4);
+        _fill_canvas(game.c4[0], game.items4);
+
+        game.resetOffset = (ITEM_COUNT + 4) * SLOT_HEIGHT;
         game.loop();
     });
 
@@ -145,27 +152,29 @@ function Game() {
     this.c1 = $('#canvas1');
     this.c2 = $('#canvas2');
     this.c3 = $('#canvas3');
+    this.c4 = $('#canvas4');
 
 
     this.offset1 = -parseInt(Math.random() * ITEM_COUNT) * SLOT_HEIGHT;
     this.offset2 = -parseInt(Math.random() * ITEM_COUNT) * SLOT_HEIGHT;
     this.offset3 = -parseInt(Math.random() * ITEM_COUNT) * SLOT_HEIGHT;
-    this.speed1 = this.speed2 = this.speed3 = 0;
+    this.offset4 = -parseInt(Math.random() * ITEM_COUNT) * SLOT_HEIGHT;
+    this.speed1 = this.speed2 = this.speed3 = this.speed4 = 0;
     this.lastUpdate = new Date();
 
     this.vendor =
         (/webkit/i).test(navigator.appVersion) ? '-webkit' :
         (/firefox/i).test(navigator.userAgent) ? '-moz' :
         (/msie/i).test(navigator.userAgent) ? 'ms' :
+        (/jadid/i).test(navigator.userAgent) ? 'jd' :
         'opera' in window ? '-o' : '';
 
     this.cssTransform = this.vendor + '-transform';
-    this.has3d = ('WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix())
-    this.trnOpen = 'translate' + (this.has3d ? '3d(' : '(');
+    this.has4d = ('WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix())
+    this.trnOpen = 'translate' + (this.has3d ? '4d(' : '(');
     this.trnClose = this.has3d ? ',0)' : ')';
-    this.scaleOpen = 'scale' + (this.has3d ? '3d(' : '(');
+    this.scaleOpen = 'scale' + (this.has3d ? '4d(' : '(');
     this.scaleClose = this.has3d ? ',0)' : ')';
-
 
     this.draw(true);
 }
@@ -173,7 +182,7 @@ function Game() {
 
 Game.prototype.restart = function() {
     this.lastUpdate = new Date();
-    this.speed1 = this.speed2 = this.speed3 = SLOT_SPEED
+    this.speed1 = this.speed2 = this.speed3 = this.speed4 = SLOT_SPEED
 
     function _find(items, id) {
         for (var i = 0; i < items.length; i++) {
@@ -184,15 +193,18 @@ Game.prototype.restart = function() {
     this.result1 = parseInt(Math.random() * this.items1.length)
     this.result2 = parseInt(Math.random() * this.items2.length)
     this.result3 = parseInt(Math.random() * this.items3.length)
+    this.result4 = parseInt(Math.random() * this.items4.length)
 
     this.stopped1 = false;
     this.stopped2 = false;
     this.stopped3 = false;
+    this.stopped4 = false;
 
 
     this.offset1 = -parseInt(Math.random(ITEM_COUNT)) * SLOT_HEIGHT;
     this.offset2 = -parseInt(Math.random(ITEM_COUNT)) * SLOT_HEIGHT;
     this.offset3 = -parseInt(Math.random(ITEM_COUNT)) * SLOT_HEIGHT;
+    this.offset4 = -parseInt(Math.random(ITEM_COUNT)) * SLOT_HEIGHT;
 
     $('#results').hide();
 
@@ -301,19 +313,29 @@ Game.prototype.update = function() {
             if (that.items3[that.result3].id == 'AA2') {
                 ec++;
             }
-            if (that.items1[that.result1].id == 'AA4' && that.items2[that.result2].id == 'AA4' && that.items3[that.result3].id == 'AA4') {
+            if (that.items4[that.result4].id == 'AA2') {
                 ec++;
             }
-            if (that.items1[that.result1].id == 'AA1' && that.items2[that.result2].id == 'AA1' && that.items3[that.result3].id == 'AA1') {
+            if (that.items1[that.result1].id == 'AA1' && that.items2[that.result2].id == 'AA1' && that.items3[that.result3].id == 'AA1' && that.items4[that.result4].id == 'AA1') {
                 ec++;
             }
-            if (that.items1[that.result1].id == 'AA3' && that.items2[that.result2].id == 'AA3' && that.items3[that.result3].id == 'AA3') {
+
+            if (that.items1[that.result1].id == 'AA3' && that.items2[that.result2].id == 'AA3' && that.items3[that.result3].id == 'AA3' && that.items4[that.result4].id == 'AA3') {
                 ec++;
             }
-            if (that.items1[that.result1].id == 'AA5' && that.items2[that.result2].id == 'AA5' && that.items3[that.result3].id == 'AA5') {
+            if (that.items1[that.result1].id == 'AA4' && that.items2[that.result2].id == 'AA4' && that.items3[that.result3].id == 'AA4' && that.items4[that.result4].id == 'AA4') {
                 ec++;
             }
-            if (that.items1[that.result1].id == 'AA6' && that.items2[that.result2].id == 'AA6' && that.items3[that.result3].id == 'AA6') {
+            if (that.items1[that.result1].id == 'AA5' && that.items2[that.result2].id == 'AA5' && that.items3[that.result3].id == 'AA5' && that.items4[that.result4].id == 'AA5') {
+                ec++;
+            }
+            if (that.items1[that.result1].id == 'AA6' && that.items2[that.result2].id == 'AA6' && that.items3[that.result3].id == 'AA6' && that.items4[that.result4].id == 'AA6') {
+                ec++;
+            }
+            if (that.items1[that.result1].id == 'AA7' && that.items2[that.result2].id == 'AA7' && that.items3[that.result3].id == 'AA7' && that.items4[that.result4].id == 'AA7') {
+                ec++;
+            }
+            if (that.items1[that.result1].id == 'AA8' && that.items2[that.result2].id == 'AA8' && that.items3[that.result3].id == 'AA8' && that.items4[that.result4].id == 'AA8') {
                 ec++;
             }
 
@@ -324,9 +346,9 @@ Game.prototype.update = function() {
             $('#status').text(BLURB_TBL[ec]);
 
 
-            this.state = 7;
+            this.state = 8;
             break;
-        case 7:
+        case 8:
             break;
         default:
     }
@@ -338,7 +360,7 @@ Game.prototype.draw = function(force) {
     if (this.state >= 6) return;
 
 
-    for (var i = 1; i <= 3; i++) {
+    for (var i = 1; i <= 4; i++) {
         var resultp = 'result' + i;
         var stopped = 'stopped' + i;
         var speedp = 'speed' + i;
@@ -352,14 +374,14 @@ Game.prototype.draw = function(force) {
 
                 if (this[offsetp] + DRAW_OFFSET > 0) {
 
-                    this[offsetp] = -this.resetOffset + SLOT_HEIGHT * 3;
+                    this[offsetp] = -this.resetOffset + SLOT_HEIGHT * 4;
                 }
 
             } else {
                 this[offsetp] += this[speedp];
                 if (this[offsetp] + DRAW_OFFSET > 0) {
 
-                    this[offsetp] = -this.resetOffset + SLOT_HEIGHT * 3 - DRAW_OFFSET;
+                    this[offsetp] = -this.resetOffset + SLOT_HEIGHT * 4 - DRAW_OFFSET;
                 }
             }
 

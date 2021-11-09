@@ -37,7 +37,7 @@ body {
     padding-top: 10px;
     width: 200px;
     height: 200px;
-    background-color: rgb(204, 246, 14);
+    background-color: rgb(20, 177, 143);
     margin-top: 20px;
     margin-right: 650px;
 }
@@ -67,9 +67,9 @@ body {
 
 #rulla {
     padding-top: 10px;
-    width: 400px;
+    width: 430px;
     height: 400px;
-    background-color: rgb(204, 246, 14);
+    background-color: rgb(20, 177, 143);
     margin-top: -210px;
 }
 
@@ -157,7 +157,7 @@ body {
     padding-top: 10px;
     width: 200px;
     height: 200px;
-    background-color: rgb(204, 246, 14);
+    background-color: rgb(20, 177, 143);
     margin-top: -410px;
     margin-left: 650px;
 }
@@ -201,5 +201,12 @@ body {
 #s1 {
     color: rgb(0, 0, 0);
     font-size: 25px;
-    margin-top: 10px;
+    margin-top: 75px;
+}
+
+.link1 {
+    width: 150px;
+    height: 30px;
+    background-color: chartreuse;
+    font-size: large;
 }
